@@ -28,6 +28,14 @@ except AttributeError:
 # Helper Methods #
 ###            ###
 
+def wrap_data(value):
+    if not _check_py3(): return plistlib.Data(value)
+    return value
+
+def extract_data(value):
+    if not _check_py3() and isinstance(value,plistlib.Data): return value.data
+    return value
+
 def _check_py3():
     return sys.version_info >= (3, 0)
 
@@ -134,8 +142,8 @@ def loads(value, fmt=None, use_builtin_types=None, dict_type=dict):
     try:
         return load(BytesIO(value),fmt=fmt,use_builtin_types=use_builtin_types,dict_type=dict_type)
     except:
-        # Python 3.9 removed use_builtin_types
-        return load(BytesIO(value),fmt=fmt,dict_type=dict_type)
+       # Python 3.9 removed use_builtin_types
+       return load(BytesIO(value),fmt=fmt,dict_type=dict_type)
 def dump(value, fp, fmt=FMT_XML, sort_keys=True, skipkeys=False):
     if _check_py3():
         plistlib.dump(value, fp, fmt=fmt, sort_keys=sort_keys, skipkeys=skipkeys)
